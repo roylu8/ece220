@@ -164,7 +164,8 @@ int make_guess (const char guess_str[]) {
 		//check for misplaced matches
 		
 		//print final score
-		
+		printf("With guess %d, you got %d perfect matches and %d misplaced matches.\nYour score is %d and current max score is %d.\n", guess_number, correctguesses, misplacedguesses,);
+		guess_number++;
 	}
 }
 
