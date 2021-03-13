@@ -10,7 +10,15 @@
  * Blank function prototypes with explanatory headers are provided
  * in this file to help you get started.
  */
-
+ 
+/* This program is a guessing game.
+ * One would have 10 turns in order to guess 4 strings. The order must be the same as the answer.
+ * A point system is also incorporated where you get 1000 points for a correct guess
+ * and 100 points for each misplaced guess.
+ * To do so, the user first enter a seed to randomly generate the answer string.
+ * Then, the player would guess and the program would provide feedback accordingly.
+ * partners: briolat2, kaylanw4
+ */
 
 
 #include <stdio.h>
@@ -87,9 +95,12 @@ int set_seed (const char seed_str[]) {
     int seed;
     char post[2];
     if (sscanf (seed_str, "%d%1s", &seed, post) != 1) {
-      // your code here
+		//checks if seed is valid
+		printf("invalid seed");
+		return 0;
     }
-    // your code here
+    srand(seed);
+	return 1;
 }
 
 
@@ -107,7 +118,14 @@ int set_seed (const char seed_str[]) {
  * SIDE EFFECTS: records the solution in the static solution variables for use by make_guess, set guess_number
  */
 void start_game () {
-    //your code here
+    for(int i=1; 1<=4; i++){
+		//select 4 random strings from pool to solution
+		int temp = rand()%7;
+		pool[temp] = solution[i];
+	}
+	//set correct values for guess_number and max_score
+	guess_number = 1;
+	max_score = -1;
 }
 
 /*
@@ -129,8 +147,25 @@ void start_game () {
  *               or an error message (invalid guess)
  *               (NOTE: the output format MUST MATCH EXACTLY, check the wiki writeup)
  */
+	string 
 int make_guess (const char guess_str[]) {
-  // your code here
+	char *answers[];
+	int correctguesses = 0;
+	int misplacedguesses = 0;
+	while(guess_number<=4){
+		//String entries
+		printf("Enter your guess: ");
+		sscanf(guess_str, "%s%s%s%s%1s", answers);
+		if(is_valid(answers)==0){
+			return 0;
+		}
+		//check for correct matches
+		
+		//check for misplaced matches
+		
+		//print final score
+		
+	}
 }
 
 
