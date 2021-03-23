@@ -1,0 +1,29 @@
+Compilation Results:
+********************
+prog5.c: In function ‘start_game’:
+prog5.c:124:16: error: ‘solution’ undeclared (first use in this function)
+   pool[temp] = solution[i];
+                ^
+prog5.c:124:16: note: each undeclared identifier is reported only once for each function it appears in
+prog5.c: At top level:
+prog5.c:151:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int’
+ int make_guess (const char guess_str[]) {
+ ^
+prog5.c: In function ‘start_game’:
+prog5.c:124:16: error: ‘solution’ undeclared (first use in this function)
+   pool[temp] = solution[i];
+                ^
+prog5.c:124:16: note: each undeclared identifier is reported only once for each function it appears in
+prog5.c: At top level:
+prog5.c:151:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int’
+ int make_guess (const char guess_str[]) {
+ ^
+
+
+Grade:
+******
+Late submission: 0
+Functionality: 0
+Comments and Style: 5
+Intro paragraph: 5
+Total: 10
