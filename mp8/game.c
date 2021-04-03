@@ -1,5 +1,13 @@
 #include "game.h"
 
+/*! This program allows the player to play a full game of 2048.
+    make_game and remake_game allow the player begin with a clear board, 
+    and then restart if they win or lose. move_w, a, s, d, implement the 
+    movement of the game by combining cells that are equal and then shifting
+    them the correct direction. 
+    
+    partners: briolat2, kaylanw4
+*/
 
 game * make_game(int rows, int cols)
 /*! Create an instance of a game structure with the given number of rows
@@ -14,7 +22,13 @@ game * make_game(int rows, int cols)
     mygame->cells = malloc(rows*cols*sizeof(cell));
 
     //YOUR CODE STARTS HERE:  Initialize all other variables in game struct
-
+	mygame->rows = rows;	//initializes variables
+	mygame->cols = cols;
+	mygame->score = 0;
+	
+	for(int i=0; i<rows*cols; i++){
+		mygame->cells[i]=-1;
+	}
 
     return mygame;
 }
@@ -31,8 +45,15 @@ void remake_game(game ** _cur_game_ptr,int new_rows,int new_cols)
 	free((*_cur_game_ptr)->cells);
 	(*_cur_game_ptr)->cells = malloc(new_rows*new_cols*sizeof(cell));
 
-	 //YOUR CODE STARTS HERE:  Re-initialize all other variables in game struct
-
+	//YOUR CODE STARTS HERE:  Re-initialize all other variables in game struct
+	(*_cur_game_ptr)->rows = new_rows;	//initializes variables
+	(*_cur_game_ptr)->cols = new_cols;
+	(*_cur_game_ptr)->score = 0;
+	
+	for(int i=0; i<new_rows*new_cols; i++){
+		(*_cur_game_ptr)->cells[i]=-1;		//fills cells with -1
+	}
+	
 	return;	
 }
 
@@ -54,8 +75,12 @@ cell * get_cell(game * cur_game, int row, int col)
 */
 {
     //YOUR CODE STARTS HERE
-
-    return NULL;
+	if(row>=cur_game->rows) return NULL;
+	else if(row<0) return NULL;
+	else if(col>=cur_game->cols) return NULL;
+	else if(col<0) return NULL;
+	
+	return cur_game->cells + row*cur_game->cols + col;
 }
 
 int move_w(game * cur_game)
@@ -67,39 +92,345 @@ int move_w(game * cur_game)
 */
 {
     //YOUR CODE STARTS HERE
+	int flag=0;
+	int target=-1;  
+    int columns = (cur_game)->cols;
+    int rows = (cur_game)->rows;
+    int combcol, combrow, last_combined_row;
+    for(combcol=0; combcol<columns; combcol++) 
+    {
+        last_combined_row=-1;
+        for(combrow=0; combrow<rows;combrow++)
+        {
+        
+            if((*get_cell(cur_game, combrow, combcol)!=-1)) // check if cell is full
+            {
+                target = combrow-1;
+		while(target>=0)
+		{ 
+		 if(*get_cell(cur_game,target,combcol)==-1)
+                  {  *get_cell(cur_game, target, combcol)=*get_cell(cur_game, combrow, combcol);
+                    *get_cell(cur_game, combrow, combcol)=-1;
+		    flag=1;
+		    combrow = target;
+		    
+		  }
+		   target --;
+		}
+		target = combrow-1;  // target is before current row
+	    }    
+        } 
+     }
 
-    return 1;
+    for(combcol=0; combcol<columns; combcol++) // combine loop
+    {
+        last_combined_row=-1;
+		target =-1;
+        for(combrow=0; combrow<rows;combrow++)
+        {	
+    		target = combrow-1;
+                 if((target)!=last_combined_row && target !=-1)
+                {
+                    if(*get_cell(cur_game, target, combcol)==*get_cell(cur_game, combrow, combcol)&& *get_cell(cur_game, target, combcol)!=-1)
+                    {
+                        *get_cell(cur_game, target, combcol)=2*(*get_cell(cur_game, target, combcol));		// increases the value
+                        *get_cell(cur_game, combrow, combcol)=-1;
+                     	cur_game->score += (*get_cell(cur_game, target, combcol)); 
+			flag=1;
+
+			last_combined_row= target-1;
+		    }
+                }
+        }		 
+    
+    }
+
+    for(combcol=0; combcol<columns; combcol++) //loop shifts combined cells up
+	{
+		for(combrow=0; combrow<rows;combrow++)
+		{
+			if(*get_cell(cur_game, combrow, combcol)!=-1)
+			{ 
+				target=combrow-1;
+				while(target>=0)
+				{
+					if(*get_cell(cur_game, target, combcol) ==-1)
+					{
+					
+						*get_cell(cur_game, target, combcol)=*get_cell(cur_game, combrow, combcol);
+						*get_cell(cur_game, combrow, combcol)=-1;
+						combrow=target;
+					}
+					target--;
+				}
+				target = combrow-1;
+			}
+		}
+	
+		
+	}
+	
+
+	return flag;
 };
 
 int move_s(game * cur_game) //slide down
 {
     //YOUR CODE STARTS HERE
-
-    return 1;
+	int columns = (cur_game)->cols;
+    int rows = (cur_game)->rows;
+	int flag=0;	
+    int target=rows;
+    int combcol, combrow, last_combined_row;
+    for(combcol=0; combcol<columns; combcol++)
+    {
+        last_combined_row=rows;
+        for(combrow=rows-1; combrow>=0;combrow--)
+        {
+            if((*get_cell(cur_game, combrow, combcol)!=-1))
+            {
+                target = combrow+1;
+		while(target<rows)
+		{ 
+		 if(*get_cell(cur_game,target,combcol)==-1)
+                  {  *get_cell(cur_game, target, combcol)=*get_cell(cur_game, combrow, combcol); //// changes the value to the target row.
+                    *get_cell(cur_game, combrow, combcol)=-1;
+		    flag=1;	// set flag to 1 to indicate success
+		    combrow = target;
+		    
+		  }
+		   target ++;
+		}
+		target = combrow+1;     
+            } 
+                 if((target)!=last_combined_row && target !=rows)
+                {
+                    if(*get_cell(cur_game, target, combcol)==*get_cell(cur_game, combrow, combcol) && *get_cell(cur_game, combrow, combcol) != -1 )
+                    {
+                        *get_cell(cur_game, target, combcol)=2*(*get_cell(cur_game, target, combcol));	// combine cells
+			
+			(cur_game)->score += (*get_cell(cur_game, target, combcol));
+                        *get_cell(cur_game, combrow, combcol)=-1;
+                     
+			flag=1;
+			last_combined_row= target+1;
+		    }
+                }
+        }		 
+        
+    }
+    for(combcol=0; combcol<columns; combcol++)
+	{
+		for(combrow=0; combrow<rows;combrow++)
+		{
+			if(*get_cell(cur_game, combrow, combcol)!=-1)
+		{
+			target=combrow+1;
+			while(target<rows)
+			{
+			if(*get_cell(cur_game, target, combcol) ==-1)
+			{
+				
+				*get_cell(cur_game, target, combcol)=*get_cell(cur_game, combrow, combcol);
+				*get_cell(cur_game, combrow, combcol)=-1;
+				combrow=target;
+			}
+				target++;
+			}
+			target = combrow+1;
+			}
+		}
+	}
+	return flag;  
 };
 
 int move_a(game * cur_game) //slide left
 {
     //YOUR CODE STARTS HERE
+	int flag=0;	
+	int target=-1;
+    int columns = (cur_game)->cols;
+    int rows = (cur_game)->rows;
+    int combcol, combrow, last_combined_row;
+    for(combrow=0; combrow<rows; combrow++)
+    {
+        last_combined_row=-1;
+        for(combcol=0; combcol<columns;combcol++)
+        {
+        
+            if((*get_cell(cur_game, combrow, combcol)!=-1))
+            {
+                target = combcol-1;
+		while(target>=0)
+		{ 
+		 if(*get_cell(cur_game,combrow,target)==-1)
+                  {  *get_cell(cur_game, combrow, target)=*get_cell(cur_game, combrow, combcol);		// redo cell
+                    *get_cell(cur_game, combrow, combcol)=-1;
+		    flag=1;
+		    combcol = target;
+		    
+		  }
+		   target --;
+		}
+		target = combcol-1;     
+            } 
+                 if((target)!=last_combined_row && target !=-1)
+                {
+                    if(*get_cell(cur_game, combrow, target)==*get_cell(cur_game, combrow, combcol)&& *get_cell(cur_game, combrow, target)!=-1)
+                    {
+                        *get_cell(cur_game, combrow, target)=2*(*get_cell(cur_game, combrow, target)); 		// combine cells
+			(cur_game)->score +=(*get_cell(cur_game,combrow,target)); 
+                        *get_cell(cur_game, combrow, combcol)=-1;
+                     
+			flag=1;
 
-    return 1;
+			last_combined_row= target-1;
+		    }
+                }
+        }		 
+        
+    }
+    for(combrow=0; combrow<rows; combrow++)
+    {
+		for(combcol=columns-1; combcol>=0;combcol--)
+		{
+			if(*get_cell(cur_game, combrow, combcol)!=-1)
+		{ 
+			target=combcol-1;
+			while(target>=0)
+			{
+			if(*get_cell(cur_game, combrow, target) ==-1)
+			{
+				
+				*get_cell(cur_game, combrow, target)=*get_cell(cur_game, combrow, combcol);
+				*get_cell(cur_game, combrow, combcol)=-1;
+				combcol=target;
+			}
+				target--;
+			}
+			target = combcol-1;
+			}
+		}
+	
+		
+	}
+	
+
+	return flag;
 };
 
 int move_d(game * cur_game){ //slide to the right
     //YOUR CODE STARTS HERE
+	int flag=0;	
+	int columns = (cur_game)->cols;
+	int target=columns;
+    int rows = (cur_game)->rows;
+    int combcol, combrow, last_combined_column;
+    for(combrow=0; combrow<rows; combrow++)
+    {
+        last_combined_column=columns;
+        for(combcol=columns-1; combcol>=0; combcol--)
+        {
+        
+            if((*get_cell(cur_game, combrow, combcol)!=-1))
+            {
+                target = combcol+1;
+		while(target<columns)
+		{ 
+		 if(*get_cell(cur_game, combrow, target)==-1)
+                  {  *get_cell(cur_game, combrow, target)=*get_cell(cur_game, combrow, combcol);		// changes target cell
+                    *get_cell(cur_game, combrow, combcol)=-1;
+		    flag=1;
+		    combcol = target;
+		    
+		  }
+		   target ++;
+		}
+		target = combcol+1;     
+            } 
+                 if((target)!=last_combined_column && target !=columns)
+                {
+                    if(*get_cell(cur_game, combrow, target)==*get_cell(cur_game, combrow, combcol) && *get_cell(cur_game, combrow, combcol) !=-1 )
+                    {
+                        *get_cell(cur_game, combrow, target)=(*get_cell(cur_game, combrow, target));			
+			(cur_game)->score +=(*get_cell(cur_game,combrow,target));
+                        *get_cell(cur_game, combrow, combcol)=-1;
+                     
+			flag=1;
+			last_combined_column= target+1;
+		    }
+                }
+        }		 
+        
+    }
+	
+	for(combrow=0; combrow<rows;combrow++)
+	{
+		for(combcol=0; combcol<columns; combcol++)
+		{
+			if(*get_cell(cur_game, combrow, combcol)!=-1)
+		{//once we find a 
+			target=combcol+1;
+			while(target<columns)
+			{
+			if(*get_cell(cur_game, combrow, target) ==-1)
+			{
+				
+				*get_cell(cur_game, combrow, target)=*get_cell(cur_game, combrow, combcol);
+				*get_cell(cur_game, combrow, combcol)=-1;
+				combcol=target;
+			}
+				target++;
+			}
+			target = combcol+1;
+			}
+		}
+	
+		
+	}
+	
+    return flag;
 
-    return 1;
 };
 
 int legal_move_check(game * cur_game)
 /*! Given the current game check if there are any legal moves on the board. There are
     no legal moves if sliding in any direction will not cause the game to change.
-	Return 1 if there are possible legal moves, 0 if there are none.
+    Return 1 if there are possible legal moves, 0 if there are none.
  */
 {
     //YOUR CODE STARTS HERE
+    int i, j;
+    int rows, cols;
+    // Declare variables for use later on
+    rows = cur_game->rows;
+    cols = cur_game->cols;
+    int *cells = cur_game->cells;
 
-    return 1;
+    // Go through each element in the matrix
+    for(i = 0; i<rows; i++ ) {
+        for(j = 0; j<cols; j++) {
+
+            // If a cell is empty, there are still legal moves
+            if(cells[i *cols + j] == -1)
+                return 1;
+
+            // If two cells in the column are equal, there are still legal moves
+            if(i+1 < rows ){
+                if( cells[i * cols + j] == cells[(i+1)*cols + j])
+                    return 1;
+            }
+    
+            // If two cells in the row are equal, there are still legal moves
+            if(j+1 < cols){
+                if( cells[i * cols + j]    == cells[(i)*cols + (j + 1)])
+                    return 1;
+            }
+
+        }
+    }
+
+    return 0;
 }
 
 
