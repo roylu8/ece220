@@ -1,109 +1,124 @@
+/*
+ * This block of code is what facilitates the creation of
+ * real number for use in complex mathematics along with
+ * imaginary numbers to allow for the use of magnitude and
+ * phase.  These real numbers are solely comprised of 
+ * decimal values.
+ * 
+ * Parters: roylu2, briolat2, kaylan4
+ */
+
+
 #include "RealNumber.h"
 #include "helper.h"
 
 RealNumber::RealNumber()
 {
-    /* Your code here */
+  real_component = 0;
+  magnitude = 0;
+  phase = 0;
+  number_type = REAL;
 }
 
 RealNumber::RealNumber(double rval)
 {
-    /* Your code here */
+  real_component = rval;
+  magnitude = abs(rval);
+  phase = calculate_phase(rval, 0);
+  number_type = REAL;
 }
 
 RealNumber::RealNumber( const RealNumber& other )
 {
-    /* Your code here */
+  real_component = other.get_real_component();
+  magnitude = other.get_magnitude();
+  phase = other.get_phase();
+  number_type = other.get_number_type();
 }
 
 void RealNumber::set_real_component (double rval)
 {
-    /* Your code here */
+  real_component = rval;
+  magnitude = abs(rval);
+  phase = calculate_phase(rval, 0);
 }
 
 double RealNumber::get_real_component() const
 {
-    /* Your code here */
-    return 0.0;
+  return real_component;
 }
 
 double RealNumber::get_magnitude() const{
-    /* Your code here */
-    return 0.0;
+  return magnitude;
 }
 
 double RealNumber::get_phase() const{
-    /* Your code here */
-    return 0.0;
+  return phase;
 }
 
 RealNumber RealNumber::operator + (const RealNumber& arg)
 {
-    /* Your code here */
-    return RealNumber();
+  // 2 +-*/ 4
+  return RealNumber(real_component + arg.get_real_component());
 }
 
 RealNumber RealNumber::operator - (const RealNumber& arg)
 {
-    /* Your code here */
-    return RealNumber();
+  return RealNumber(real_component - arg.get_real_component());
 }
 
 RealNumber RealNumber::operator * (const RealNumber& arg)
 {
-    /* Your code here */
-    return RealNumber();
+  return RealNumber(real_component * arg.get_real_component());
 }
 
 RealNumber RealNumber::operator / (const RealNumber& arg)
 {
-    /* Your code here */
-    return RealNumber();
+  return RealNumber(real_component / arg.get_real_component());
 }
 
 ComplexNumber RealNumber::operator + (const ImaginaryNumber& arg){
-    /* Your code here */
-	return ComplexNumber();
+  // 2 +- 4i
+  return ComplexNumber(real_component, + arg.get_imaginary_component());
 }
 
 ComplexNumber RealNumber::operator - (const ImaginaryNumber& arg){
-    /* Your code here */
-	return ComplexNumber();
+  return ComplexNumber(real_component, - arg.get_imaginary_component());
 }
 
 ImaginaryNumber RealNumber::operator * (const ImaginaryNumber& arg){
-    /* Your code here */
-	return ImaginaryNumber();
+  // 2 */ 4i
+  return ImaginaryNumber(real_component * arg.get_imaginary_component());
 }
 
 ImaginaryNumber RealNumber::operator / (const ImaginaryNumber& arg){
-    /* Your code here */
-	return ImaginaryNumber();
+  return ImaginaryNumber(-1 * real_component / arg.get_imaginary_component());
 }
 
 ComplexNumber RealNumber::operator + (const ComplexNumber& arg){
-    /* Your code here */
-	return ComplexNumber();
+  // 2 +- <4,2>
+  return ComplexNumber(real_component + arg.get_real_component(), + arg.get_imaginary_component());
 }
 
 ComplexNumber RealNumber::operator - (const ComplexNumber& arg){
-    /* Your code here */
-	return ComplexNumber();
+  return ComplexNumber(real_component - arg.get_real_component(), + arg.get_imaginary_component());
 }
 
 ComplexNumber RealNumber::operator * (const ComplexNumber& arg){
-    /* Your code here */
-	return ComplexNumber();
+  // 2 */ <4,2>
+  return ComplexNumber(real_component * arg.get_real_component(), real_component * arg.get_imaginary_component());
 }
 
 ComplexNumber RealNumber::operator / (const ComplexNumber& arg){
-    /* Your code here */
-    return ComplexNumber();
+  double den = (arg.get_real_component()*arg.get_real_component() + arg.get_imaginary_component()*arg.get_imaginary_component());
+  double num_real = (real_component*arg.get_real_component());
+  double num_imag = (real_component*-1*arg.get_imaginary_component());
+  return ComplexNumber(num_real / den , num_imag / den);
 }
 
 string RealNumber::to_String(){
-    /* Do not modify */
-    stringstream my_output;
-    my_output << std::setprecision(3) << real_component;
-    return my_output.str();
+  /* Do not modify */
+  stringstream my_output;
+  my_output << std::setprecision(3) << real_component;
+  return my_output.str();
 }
